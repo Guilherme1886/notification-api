@@ -6,6 +6,51 @@ The service is designed as a study of clean layering, the Strategy pattern, and 
 
 ---
 
+## Live demo
+
+**Base URL:** https://notification-api-ucxm.onrender.com
+
+> Hosted on Render's free tier, which **spins the instance down after ~15 minutes of inactivity**. The first request after a cold start can take 30–60 seconds while the container boots and Flyway runs its migrations. Subsequent requests respond in milliseconds.
+
+### Try it with curl
+
+Create an email template:
+
+```bash
+curl -X POST https://notification-api-ucxm.onrender.com/templates \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "id": "payment_approved",
+    "name": "Pagamento Aprovado",
+    "channel": "EMAIL",
+    "subject": "Seu pagamento foi aprovado",
+    "body": "Olá {{nome}}, seu pagamento de {{valor}} foi aprovado."
+  }'
+```
+
+Queue a notification using that template:
+
+```bash
+curl -X POST https://notification-api-ucxm.onrender.com/notifications \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "recipientId": "11111111-1111-1111-1111-111111111111",
+    "channel": "EMAIL",
+    "templateId": "payment_approved",
+    "variables": { "nome": "Guilherme", "valor": "R$ 300,00" }
+  }'
+```
+
+The response carries the notification `id` and a `Location` header. Poll the status with:
+
+```bash
+curl https://notification-api-ucxm.onrender.com/notifications/<id>
+```
+
+It transitions `PENDING -> PROCESSING -> DELIVERED` (the live senders are logging stubs, so every attempt succeeds unless the sender is intentionally broken).
+
+---
+
 ## Stack
 
 - **Java 21** (records, pattern-matched `switch`, virtual-thread-friendly executors)

@@ -1,0 +1,42 @@
+# Keep the build context small and reproducible.
+
+# Build artifacts (re-built inside the image)
+build/
+.gradle/
+out/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Secrets / local-only
+.env
+.env.*
+docker-compose.yml
+
+# Docs (not needed at runtime)
+README.md
+*.md
+
+# Docker self-references
+Dockerfile
+.dockerignore

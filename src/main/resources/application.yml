@@ -2,9 +2,9 @@ spring:
   application:
     name: notification-api
   datasource:
-    url: jdbc:postgresql://localhost:5432/notifications
-    username: notifications
-    password: notifications
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/notifications}
+    username: ${SPRING_DATASOURCE_USERNAME:notifications}
+    password: ${SPRING_DATASOURCE_PASSWORD:notifications}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -12,13 +12,16 @@ spring:
       hibernate:
         jdbc.time_zone: UTC
         format_sql: true
+        default_schema: notification
     open-in-view: false
   flyway:
     enabled: true
     baseline-on-migrate: true
+    schemas: notification
+    default-schema: notification
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 logging:
   level:

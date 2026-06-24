@@ -6,6 +6,7 @@ import com.example.notification.domain.model.NotificationStatus;
 import com.example.notification.domain.model.Template;
 import com.example.notification.infra.repository.JpaNotificationRepository;
 import com.example.notification.infra.repository.JpaTemplateRepository;
+import com.example.notification.infra.security.ApiKeyAuthFilter;
 import com.example.notification.infra.sender.EmailSender;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,12 +21,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,6 +60,13 @@ class NotificationFlowIntegrationTest {
 
     @BeforeEach
     void cleanDb() {
+        // Toda request interna precisa enviar a API key válida.
+        ClientHttpRequestInterceptor apiKey = (request, body, execution) -> {
+            request.getHeaders().add(ApiKeyAuthFilter.API_KEY_HEADER, "test-key");
+            return execution.execute(request, body);
+        };
+        rest.getRestTemplate().setInterceptors(List.of(apiKey));
+
         notifRepo.deleteAll();
         templateRepo.deleteAll();
         flaky().reset();

@@ -19,6 +19,20 @@ spring:
     baseline-on-migrate: true
     schemas: notification
     default-schema: notification
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: notification-api
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+kafka:
+  enabled: ${KAFKA_ENABLED:true}
+
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://localhost:8080}
 
 internal:
   api:

@@ -5,6 +5,9 @@ spring:
   flyway:
     enabled: true
 
+kafka:
+  enabled: false
+
 internal:
   api:
     key: test-key
